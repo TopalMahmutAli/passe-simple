@@ -1,17 +1,14 @@
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { colors } from "@/theme/colors";
 
 export default function ChapterScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-
   return (
     <ScrollView
       contentContainerStyle={styles.container}
       contentInsetAdjustmentBehavior="automatic"
     >
       <Text style={styles.title}>La Révolution française</Text>
-      <Text style={styles.identifier}>Identifiant : {id}</Text>
 
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Les causes de la Révolution</Text>
@@ -41,10 +38,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 28,
     fontWeight: "bold",
-  },
-  identifier: {
-    color: colors.text,
-    fontSize: 14,
   },
   card: {
     backgroundColor: colors.surface,

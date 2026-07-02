@@ -11,7 +11,6 @@ export default function LessonScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <Text style={styles.title}>Les causes de la Révolution</Text>
-      <Text style={styles.identifier}>Identifiant : {id}</Text>
       <Text style={styles.text}>
         Le contenu historique complet sera ajouté avec les données Supabase.
       </Text>
@@ -39,10 +38,6 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 28,
     fontWeight: "bold",
-  },
-  identifier: {
-    color: colors.accent,
-    fontSize: 14,
   },
   text: {
     color: colors.text,
