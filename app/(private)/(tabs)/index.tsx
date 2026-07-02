@@ -1,35 +1,95 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
 
+type Chapter = {
+  id: string;
+  title: string;
+  description: string;
+  position: number;
+};
+
+async function getChapters(): Promise<Chapter[]> {
+  const { data, error } = await supabase
+    .from("chapters")
+    .select("id, title, description, position")
+    .order("position");
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
 export default function DiscoverScreen() {
+  const { data: chapters, isPending, isError } = useQuery({
+    queryKey: ["chapters"],
+    queryFn: getChapters,
+  });
+
+  if (isPending) {
+    return (
+      <View style={styles.messageContainer}>
+        <ActivityIndicator color={colors.primary} size="large" />
+        <Text style={styles.message}>Chargement des chapitres...</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.messageContainer}>
+        <Text style={styles.message}>
+          Impossible de charger les chapitres.
+        </Text>
+      </View>
+    );
+  }
+
   return (
-    <ScrollView
+    <FlatList
+      data={chapters}
+      keyExtractor={(chapter) => chapter.id}
       contentContainerStyle={styles.container}
       contentInsetAdjustmentBehavior="automatic"
-    >
-      <Text style={styles.title}>Passé Simple</Text>
-      <Text style={styles.subtitle}>L’Histoire devient plus simple.</Text>
+      ListHeaderComponent={
+        <View style={styles.header}>
+          <Text style={styles.title}>Passé Simple</Text>
+          <Text style={styles.subtitle}>L’Histoire devient plus simple.</Text>
+        </View>
+      }
+      ListEmptyComponent={
+        <Text style={styles.message}>Aucun chapitre disponible.</Text>
+      }
+      renderItem={({ item }) => (
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>{item.title}</Text>
+          <Text style={styles.cardText}>{item.description}</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>La Révolution française</Text>
-        <Text style={styles.cardText}>
-          Découvrez les trois chapitres du premier programme.
-        </Text>
-
-        <Link
-          href={{
-            pathname: "/chapter/[id]",
-            params: { id: "revolution-francaise" },
-          }}
-          asChild
-        >
-          <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>Voir le chapitre</Text>
-          </Pressable>
-        </Link>
-      </View>
-    </ScrollView>
+          <Link
+            href={{
+              pathname: "/chapter/[id]",
+              params: { id: item.id },
+            }}
+            asChild
+          >
+            <Pressable style={styles.button}>
+              <Text style={styles.buttonText}>Voir le chapitre</Text>
+            </Pressable>
+          </Link>
+        </View>
+      )}
+    />
   );
 }
 
@@ -39,6 +99,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     gap: 12,
     padding: 20,
+  },
+  header: {
+    gap: 4,
+    marginBottom: 4,
+  },
+  messageContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.background,
+    gap: 12,
+    padding: 20,
+  },
+  message: {
+    color: colors.text,
+    fontSize: 16,
+    textAlign: "center",
   },
   title: {
     color: colors.primary,
