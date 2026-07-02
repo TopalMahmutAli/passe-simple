@@ -1,10 +1,9 @@
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
 import { colors } from "@/theme/colors";
 
 export default function QuizScreen() {
   const router = useRouter();
-  const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
 
   return (
     <ScrollView
@@ -12,7 +11,6 @@ export default function QuizScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <Text style={styles.title}>Mini-quiz</Text>
-      <Text style={styles.text}>Fiche sélectionnée : {lessonId}</Text>
       <Text style={styles.text}>
         Les trois questions seront ajoutées pendant l’étape du quiz.
       </Text>
