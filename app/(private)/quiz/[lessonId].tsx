@@ -12,22 +12,16 @@ import {
 import Animated, { FadeIn } from "react-native-reanimated";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
+import {
+  getChoiceLabel,
+  getQuizResultMessage,
+  isCorrectChoice,
+} from "@/lib/quiz";
+import type { Choice, QuizQuestion } from "@/lib/quiz";
 import { colors } from "@/theme/colors";
 import { borderRadius, spacing } from "@/theme/layout";
 
-type Choice = "a" | "b" | "c";
-
-type Question = {
-  id: string;
-  question: string;
-  choice_a: string;
-  choice_b: string;
-  choice_c: string;
-  correct_choice: Choice;
-  position: number;
-};
-
-async function getQuestions(lessonId: string): Promise<Question[]> {
+async function getQuestions(lessonId: string): Promise<QuizQuestion[]> {
   const { data, error } = await supabase
     .from("questions")
     .select(
@@ -41,18 +35,6 @@ async function getQuestions(lessonId: string): Promise<Question[]> {
   }
 
   return data;
-}
-
-function getChoiceLabel(question: Question, choice: Choice) {
-  if (choice === "a") {
-    return question.choice_a;
-  }
-
-  if (choice === "b") {
-    return question.choice_b;
-  }
-
-  return question.choice_c;
 }
 
 type SaveProgressInput = {
@@ -185,13 +167,7 @@ export default function QuizScreen() {
   }
 
   if (isFinished) {
-    let feedbackMessage = "Relisez la fiche puis réessayez.";
-
-    if (score === questions.length) {
-      feedbackMessage = "Excellent !";
-    } else if (score >= questions.length / 2) {
-      feedbackMessage = "Bien joué !";
-    }
+    const feedbackMessage = getQuizResultMessage(score, questions.length);
 
     return (
       <ScrollView
@@ -258,7 +234,9 @@ export default function QuizScreen() {
   ];
 
   const isLastQuestion = currentIndex === questions.length - 1;
-  const isCorrect = selectedChoice === currentQuestion.correct_choice;
+  const isCorrect =
+    selectedChoice !== null &&
+    isCorrectChoice(selectedChoice, currentQuestion.correct_choice);
 
   function handleSelectChoice(choice: Choice) {
     if (isAnswered) {
@@ -268,7 +246,7 @@ export default function QuizScreen() {
     setSelectedChoice(choice);
     setIsAnswered(true);
 
-    if (choice === currentQuestion.correct_choice) {
+    if (isCorrectChoice(choice, currentQuestion.correct_choice)) {
       setScore((currentScore) => currentScore + 1);
     }
   }
