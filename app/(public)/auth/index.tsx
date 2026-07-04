@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
+import { borderRadius, spacing } from "@/theme/layout";
 
 export default function AuthScreen() {
   const [email, setEmail] = useState("");
@@ -138,8 +139,8 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: "center",
-    gap: 16,
-    padding: 24,
+    gap: spacing.large,
+    padding: spacing.xxlarge,
   },
   title: {
     color: colors.primary,
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
   input: {
     backgroundColor: colors.surface,
     borderColor: colors.accent,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     borderWidth: 1,
     color: colors.text,
     fontSize: 16,
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     padding: 14,
   },
   primaryButtonText: {
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     alignItems: "center",
     borderColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     borderWidth: 1,
     padding: 14,
   },

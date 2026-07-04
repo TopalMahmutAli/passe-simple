@@ -12,6 +12,7 @@ import {
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
+import { borderRadius, spacing } from "@/theme/layout";
 
 type ProgressLesson = {
   id: string;
@@ -194,15 +195,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: colors.background,
     gap: 14,
-    padding: 20,
+    padding: spacing.xlarge,
   },
   messageContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.background,
-    gap: 12,
-    padding: 24,
+    gap: spacing.medium,
+    padding: spacing.xxlarge,
   },
   message: {
     color: colors.text,
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
   },
   header: {
     gap: 2,
-    marginBottom: 4,
+    marginBottom: spacing.xsmall,
   },
   title: {
     color: colors.primary,
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     alignItems: "center",
-    gap: 8,
+    gap: spacing.small,
     paddingTop: 40,
   },
   emptyTitle: {
@@ -237,10 +238,10 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderColor: colors.accent,
-    borderRadius: 14,
+    borderRadius: borderRadius.large,
     borderWidth: 1,
     gap: 10,
-    padding: 18,
+    padding: spacing.large,
     shadowColor: colors.text,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -271,7 +272,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     alignItems: "center",
     flexDirection: "row",
-    gap: 4,
+    gap: spacing.xsmall,
     marginTop: 2,
   },
   readLinkText: {
@@ -282,9 +283,9 @@ const styles = StyleSheet.create({
   retryButton: {
     alignItems: "center",
     backgroundColor: colors.secondary,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     padding: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xlarge,
   },
   retryButtonText: {
     color: colors.background,

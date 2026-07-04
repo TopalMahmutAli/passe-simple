@@ -13,6 +13,7 @@ import {
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
+import { borderRadius, spacing } from "@/theme/layout";
 
 type Chapter = {
   id: string;
@@ -252,15 +253,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: colors.background,
     gap: 14,
-    padding: 20,
+    padding: spacing.xlarge,
   },
   messageContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.background,
-    gap: 12,
-    padding: 20,
+    gap: spacing.medium,
+    padding: spacing.xlarge,
   },
   message: {
     color: colors.text,
@@ -283,12 +284,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     gap: 10,
-    padding: 16,
+    padding: spacing.large,
   },
   cardHeaderRow: {
     alignItems: "center",
     flexDirection: "row",
-    gap: 8,
+    gap: spacing.small,
     justifyContent: "space-between",
   },
   cardTitle: {
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     padding: 12,
   },
   buttonText: {

@@ -12,6 +12,7 @@ import {
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
+import { borderRadius, spacing } from "@/theme/layout";
 
 type Choice = "a" | "b" | "c";
 
@@ -348,16 +349,16 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: colors.background,
-    gap: 16,
-    padding: 24,
+    gap: spacing.large,
+    padding: spacing.xxlarge,
   },
   messageContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.background,
-    gap: 12,
-    padding: 24,
+    gap: spacing.medium,
+    padding: spacing.xxlarge,
   },
   message: {
     color: colors.text,
@@ -385,7 +386,7 @@ const styles = StyleSheet.create({
   choiceButton: {
     backgroundColor: colors.surface,
     borderColor: colors.accent,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     borderWidth: 1,
     padding: 14,
   },
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     padding: 14,
   },
   buttonText: {
@@ -432,9 +433,9 @@ const styles = StyleSheet.create({
   retryButton: {
     alignItems: "center",
     backgroundColor: colors.secondary,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     padding: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: spacing.xlarge,
   },
   retryButtonText: {
     color: colors.background,

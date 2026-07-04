@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useAuth } from "@/contexts/auth-context";
 import { colors } from "@/theme/colors";
+import { borderRadius, spacing } from "@/theme/layout";
 
 const REMINDER_ENABLED_KEY = "@passe-simple/reminder-enabled";
 const REMINDER_ID_KEY = "@passe-simple/reminder-id";
@@ -190,8 +191,8 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: colors.background,
-    gap: 12,
-    padding: 24,
+    gap: spacing.medium,
+    padding: spacing.xxlarge,
   },
   title: {
     color: colors.primary,
@@ -208,13 +209,13 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   reminderSection: {
-    gap: 8,
-    marginTop: 12,
+    gap: spacing.small,
+    marginTop: spacing.medium,
   },
   reminderRow: {
     alignItems: "center",
     flexDirection: "row",
-    gap: 12,
+    gap: spacing.medium,
     justifyContent: "space-between",
   },
   reminderText: {
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: borderRadius.medium,
     padding: 14,
   },
   buttonText: {

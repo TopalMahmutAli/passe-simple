@@ -6,6 +6,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "@/contexts/auth-context";
 import { colors } from "@/theme/colors";
+import { spacing } from "@/theme/layout";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.background,
-    gap: 12,
+    gap: spacing.medium,
   },
   loadingText: {
     color: colors.text,
