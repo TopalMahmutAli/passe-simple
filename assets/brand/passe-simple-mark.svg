@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Fond bordeaux -->
+  <rect x="0" y="0" width="1024" height="1024" fill="#6E1F2A" />
+
+  <!-- Page gauche du livre ouvert (ivoire) : creux central en V, page ouverte vers l'exterieur -->
+  <polygon points="512,400 210,320 210,650 512,720" fill="#F6F0E6" />
+
+  <!-- Page droite du livre ouvert (ivoire), symetrique -->
+  <polygon points="512,400 814,320 814,650 512,720" fill="#F6F0E6" />
+
+  <!-- Reliure centrale fine (or vieilli) -->
+  <rect x="504" y="400" width="16" height="320" fill="#B38A4B" />
+</svg>
