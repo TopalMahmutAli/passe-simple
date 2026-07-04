@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
 
@@ -52,9 +53,48 @@ function getChoiceLabel(question: Question, choice: Choice) {
   return question.choice_c;
 }
 
+type SaveProgressInput = {
+  userId: string;
+  lessonId: string;
+  score: number;
+};
+
+async function saveProgress(userId: string, lessonId: string, score: number) {
+  const { data, error } = await supabase
+    .from("progress")
+    .select("best_score")
+    .eq("user_id", userId)
+    .eq("lesson_id", lessonId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  const bestScore = Math.max(data?.best_score ?? 0, score);
+
+  const { error: upsertError } = await supabase.from("progress").upsert(
+    {
+      user_id: userId,
+      lesson_id: lessonId,
+      best_score: bestScore,
+      completed_at: new Date().toISOString(),
+    },
+    {
+      onConflict: "user_id,lesson_id",
+    }
+  );
+
+  if (upsertError) {
+    throw upsertError;
+  }
+}
+
 export default function QuizScreen() {
   const { lessonId } = useLocalSearchParams<{ lessonId: string }>();
   const router = useRouter();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const {
     data: questions,
@@ -67,11 +107,33 @@ export default function QuizScreen() {
     enabled: Boolean(lessonId),
   });
 
+  const progressMutation = useMutation({
+    mutationFn: (input: SaveProgressInput) =>
+      saveProgress(input.userId, input.lessonId, input.score),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["progress", variables.userId],
+      });
+    },
+  });
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedChoice, setSelectedChoice] = useState<Choice | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+
+  function handleSaveProgress(finalScore: number) {
+    if (!user?.id || !lessonId) {
+      return;
+    }
+
+    progressMutation.mutate({
+      userId: user.id,
+      lessonId,
+      score: finalScore,
+    });
+  }
 
   if (!lessonId) {
     return (
@@ -140,6 +202,31 @@ export default function QuizScreen() {
         </Text>
         <Text style={styles.message}>{feedbackMessage}</Text>
 
+        {!user?.id ? (
+          <Text style={styles.message}>
+            Connectez-vous pour enregistrer votre progression.
+          </Text>
+        ) : progressMutation.isPending ? (
+          <Text style={styles.message}>
+            Enregistrement de la progression...
+          </Text>
+        ) : progressMutation.isSuccess ? (
+          <Text style={styles.message}>Progression enregistrée.</Text>
+        ) : progressMutation.isError ? (
+          <View style={styles.progressErrorContainer}>
+            <Text style={styles.message}>
+              Impossible d’enregistrer la progression.
+            </Text>
+            <Pressable
+              disabled={progressMutation.isPending}
+              onPress={() => handleSaveProgress(score)}
+              style={styles.retryButton}
+            >
+              <Text style={styles.retryButtonText}>Réessayer</Text>
+            </Pressable>
+          </View>
+        ) : null}
+
         <Pressable onPress={() => router.back()} style={styles.button}>
           <Text style={styles.buttonText}>Fermer</Text>
         </Pressable>
@@ -187,6 +274,7 @@ export default function QuizScreen() {
   function handleNext() {
     if (isLastQuestion) {
       setIsFinished(true);
+      handleSaveProgress(score);
       return;
     }
 
@@ -314,6 +402,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   feedbackContainer: {
+    gap: 10,
+  },
+  progressErrorContainer: {
     gap: 10,
   },
   feedbackCorrect: {
