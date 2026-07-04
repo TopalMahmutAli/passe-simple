@@ -22,13 +22,15 @@ Passé Simple découpe une période historique en chapitres et en fiches courtes
 
 ## 2. Périmètre du MVP
 
-Le MVP se concentre sur la Révolution française avec trois chapitres :
+Le MVP se concentre sur la Révolution française avec trois chapitres et six fiches, de la fin de l'Ancien Régime à la naissance de la République en septembre 1792 :
 
-1. Les causes de la Révolution et les États généraux ;
-2. L'année 1789 et la Déclaration des droits de l'homme et du citoyen ;
-3. La République, la Terreur et la fin de la Révolution.
+1. La fin de l'Ancien Régime — La société d'ordres ; La crise de la monarchie ;
+2. L'année 1789 — Des États généraux à l'Assemblée nationale ; La prise de la Bastille ;
+3. De la monarchie à la République — La monarchie constitutionnelle ; La naissance de la République.
 
-Chaque chapitre contient quelques fiches courtes. Chaque fiche possède un mini-quiz de trois questions.
+Le contenu s'arrête à la proclamation de la République. La Terreur et la suite de la Révolution ne font pas partie de ce MVP ; elles pourront constituer une extension future.
+
+Chaque chapitre contient deux fiches courtes. Chaque fiche possède un mini-quiz de trois questions.
 
 ### Fonctionnalités obligatoires
 
@@ -187,17 +189,21 @@ Règles :
 
 ## 7. État et persistance
 
-- Supabase contient les cours, les favoris et la progression ;
-- TanStack Query charge et met en cache les données distantes ;
-- un Context conserve l'état temporaire du quiz ;
-- Supabase Auth conserve la session ;
-- AsyncStorage conserve la préférence et l'identifiant du rappel quotidien.
+- `AuthContext` gère l'utilisateur connecté et s'appuie sur Supabase Auth pour la persistance et la restauration automatique de la session ;
+- TanStack Query charge et met en cache les données distantes (chapitres, fiches, favoris, progression) ;
+- `useState` gère l'état local du mini-quiz (question en cours, réponse choisie, score), car tout le parcours reste dans une seule modale ;
+- AsyncStorage conserve la préférence d'activation et l'identifiant de la notification du rappel quotidien ;
+- Supabase conserve les favoris et le meilleur score de chaque fiche.
 
 ## 8. Brique avancée choisie
 
 La brique avancée du MVP est la notification locale.
 
-L'utilisateur peut activer un rappel quotidien depuis son compte. L'application demande la permission au moment de l'action. Si la permission est refusée, le réglage reste désactivé et un message explique la situation.
+L'utilisateur active un rappel quotidien à 18 h depuis l'écran Mon compte. La permission de notification est demandée uniquement au moment de cette action, jamais au lancement de l'application. Si la permission est refusée, le réglage reste désactivé et un message explique la situation. L'identifiant de la notification programmée et la préférence d'activation sont conservés avec AsyncStorage.
+
+Il s'agit d'une notification strictement locale, programmée sur l'appareil : aucun serveur, aucun token push, aucune Edge Function et aucune table `push_tokens` ne sont utilisés.
+
+Le fonctionnement a été vérifié sur iPhone via Expo Go. La compatibilité Android (création du canal de notification) est implémentée mais n'a pas encore été testée sur un appareil physique ; une validation finale sur les deux plateformes nécessitera un development build.
 
 Le GPS, les capteurs et les notifications push serveur ne font pas partie du MVP.
 
@@ -205,17 +211,18 @@ Le GPS, les capteurs et les notifications push serveur ne font pas partie du MVP
 
 L'interface doit évoquer l'Histoire sans imiter un vieux document difficile à lire.
 
-Direction proposée :
+Palette réellement utilisée, centralisée dans `theme/colors.ts` :
 
-- fond clair légèrement crème ;
-- texte principal bleu très sombre ;
-- couleur principale bordeaux ;
-- couleur secondaire dorée utilisée avec modération ;
-- cartes simples avec coins légèrement arrondis ;
-- typographie lisible ;
-- espacements définis dans un petit design system.
+- Bordeaux `#6E1F2A` — couleur principale ;
+- Grenat `#8B2635` — couleur secondaire ;
+- Ivoire `#F6F0E6` — fond ;
+- Papier `#E9DDC9` — surfaces (cartes) ;
+- Or vieilli `#B38A4B` — accent ;
+- Encre `#24201D` — texte principal.
 
-Les animations restent discrètes : apparition des cartes, transition entre les questions, retour visuel sur une réponse et progression animée.
+Il s'agit pour l'instant d'un petit système de couleurs et de styles cohérents, pas d'un système de composants UI complet.
+
+Des animations discrètes sont envisagées (apparition des cartes, transition entre les questions, retour visuel sur une réponse), mais aucune n'est implémentée à ce jour ; React Native Reanimated est installé sans être encore utilisé.
 
 ## 10. Gestion des erreurs
 
@@ -245,7 +252,7 @@ Le MVP est fonctionnel lorsque :
 
 - un utilisateur peut créer un compte et se connecter ;
 - les trois chapitres pilotes sont consultables ;
-- au moins une fiche complète est disponible par chapitre ;
+- chaque chapitre présente ses deux fiches complètes ;
 - chaque fiche possède trois questions ;
 - les favoris sont enregistrés ;
 - le meilleur score est enregistré ;
@@ -266,7 +273,7 @@ Le MVP est fonctionnel lorsque :
 - AsyncStorage ;
 - Expo Notifications ;
 - React Native Reanimated ;
-- Jest et React Native Testing Library.
+- Jest et React Native Testing Library (prévus, non encore installés).
 
 ## 14. Monétisation
 
@@ -295,10 +302,40 @@ Les packs numériques devront être créés dans Google Play et l'App Store puis
 
 Aucun paiement ne sera développé dans le MVP. Seule cette stratégie est documentée pour répondre aux exigences du projet.
 
-## 15. Livrables
+## 15. État d'avancement
 
-- code source ;
+### Terminé
+
+- conception et cahier des charges ;
+- navigation ;
+- authentification (inscription, connexion, session, déconnexion) ;
+- backend Supabase (chapitres, fiches, favoris, progression) ;
+- contenu des trois chapitres et six fiches ;
+- favoris (ajout, retrait, écran dédié) ;
+- mini-quiz et sauvegarde du meilleur score ;
+- écran de progression ;
+- notification locale de rappel quotidien ;
+- gestion des chargements, erreurs et états vides sur les écrans principaux.
+
+### En cours ou restant
+
+- animations ;
+- tests automatisés ;
+- assets définitifs (icône, splash) ;
+- configuration EAS finale ;
+- development build validé ;
+- builds de production Android et iOS ;
+- préparation du ZIP source ;
+- plan de publication final.
+
+## 16. Livraison et livrables
+
+La voie de livraison retenue est la voie A : un build de production accompagné d'un plan de publication, sans publication réelle sur un store.
+
+- code source, livré sous forme de ZIP propre (sans `node_modules`, `.expo`, `.git`, `.env.local`, caches ni secrets) ;
 - README ;
 - cahier des charges ;
-- tests ;
-- archive ;
+- une archive Android signée ;
+- une archive iOS signée si le compte et les certificats Apple sont disponibles.
+
+Aucun build de production n'existe à ce jour ; ils font partie des prochaines étapes.
