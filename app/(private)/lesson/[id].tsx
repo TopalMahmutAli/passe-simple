@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocalSearchParams } from "expo-router";
 import {
@@ -112,6 +113,9 @@ export default function LessonScreen() {
       queryClient.invalidateQueries({
         queryKey: ["favorites", user?.id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["favorite-lesson-ids", user?.id],
+      });
     },
     onError: () => {
       Alert.alert(
@@ -181,6 +185,13 @@ export default function LessonScreen() {
               styles.favoriteButtonDisabled,
           ]}
         >
+          {!isFavoritePending && (
+            <Ionicons
+              name={isFavorite ? "bookmark" : "bookmark-outline"}
+              size={18}
+              color={colors.text}
+            />
+          )}
           <Text style={styles.favoriteButtonText}>
             {isFavoritePending
               ? "Chargement du favori..."
@@ -258,6 +269,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: colors.accent,
     borderRadius: 10,
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "center",
     padding: 14,
   },
   favoriteButtonDisabled: {

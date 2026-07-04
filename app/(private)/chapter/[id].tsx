@@ -1,13 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
 
@@ -54,13 +57,108 @@ async function getChapter(id: string): Promise<{
   };
 }
 
+async function getFavoriteLessonIds(
+  userId: string | undefined
+): Promise<string[]> {
+  if (!userId) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("favorites")
+    .select("lesson_id")
+    .eq("user_id", userId);
+
+  if (error) {
+    throw error;
+  }
+
+  return data.map((favorite) => favorite.lesson_id);
+}
+
+async function toggleFavorite(
+  userId: string,
+  lessonId: string,
+  isFavorite: boolean
+) {
+  if (isFavorite) {
+    const { error } = await supabase
+      .from("favorites")
+      .delete()
+      .eq("user_id", userId)
+      .eq("lesson_id", lessonId);
+
+    if (error) {
+      throw error;
+    }
+
+    return;
+  }
+
+  const { error } = await supabase.from("favorites").insert({
+    user_id: userId,
+    lesson_id: lessonId,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
 export default function ChapterScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { user } = useAuth();
+  const userId = user?.id;
+  const queryClient = useQueryClient();
 
   const { data, isPending, isError } = useQuery({
     queryKey: ["chapter", id],
     queryFn: () => getChapter(id),
   });
+
+  const { data: favoriteLessonIds = [] } = useQuery({
+    queryKey: ["favorite-lesson-ids", userId],
+    queryFn: () => getFavoriteLessonIds(userId),
+    enabled: Boolean(userId),
+  });
+
+  const favoriteMutation = useMutation({
+    mutationFn: (variables: {
+      userId: string;
+      lessonId: string;
+      isFavorite: boolean;
+    }) =>
+      toggleFavorite(variables.userId, variables.lessonId, variables.isFavorite),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["favorite-lesson-ids", variables.userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["favorite", variables.userId, variables.lessonId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["favorites", variables.userId],
+      });
+    },
+    onError: () => {
+      Alert.alert(
+        "Favori impossible",
+        "Une erreur est survenue pendant la mise à jour du favori."
+      );
+    },
+  });
+
+  function handleToggleFavorite(lessonId: string, isFavorite: boolean) {
+    if (!userId) {
+      Alert.alert(
+        "Connexion nécessaire",
+        "Vous devez être connecté pour gérer vos favoris."
+      );
+      return;
+    }
+
+    favoriteMutation.mutate({ userId, lessonId, isFavorite });
+  }
 
   if (isPending) {
     return (
@@ -94,24 +192,47 @@ export default function ChapterScreen() {
           Aucune leçon disponible dans ce chapitre.
         </Text>
       ) : (
-        data.lessons.map((lesson) => (
-          <View key={lesson.id} style={styles.card}>
-            <Text style={styles.cardTitle}>{lesson.title}</Text>
-            <Text style={styles.text}>{lesson.summary}</Text>
+        data.lessons.map((lesson) => {
+          const isFavorite = favoriteLessonIds.includes(lesson.id);
+          const isThisLessonPending =
+            favoriteMutation.isPending &&
+            favoriteMutation.variables?.lessonId === lesson.id;
 
-            <Link
-              href={{
-                pathname: "/lesson/[id]",
-                params: { id: lesson.id },
-              }}
-              asChild
-            >
-              <Pressable style={styles.button}>
-                <Text style={styles.buttonText}>Lire la fiche</Text>
-              </Pressable>
-            </Link>
-          </View>
-        ))
+          return (
+            <View key={lesson.id} style={styles.card}>
+              <View style={styles.cardHeaderRow}>
+                <Text style={styles.cardTitle}>{lesson.title}</Text>
+
+                <Pressable
+                  disabled={isThisLessonPending}
+                  hitSlop={8}
+                  onPress={() => handleToggleFavorite(lesson.id, isFavorite)}
+                  style={isThisLessonPending && styles.favoriteIconDisabled}
+                >
+                  <Ionicons
+                    name={isFavorite ? "bookmark" : "bookmark-outline"}
+                    size={22}
+                    color={colors.accent}
+                  />
+                </Pressable>
+              </View>
+
+              <Text style={styles.text}>{lesson.summary}</Text>
+
+              <Link
+                href={{
+                  pathname: "/lesson/[id]",
+                  params: { id: lesson.id },
+                }}
+                asChild
+              >
+                <Pressable style={styles.button}>
+                  <Text style={styles.buttonText}>Lire la fiche</Text>
+                </Pressable>
+              </Link>
+            </View>
+          );
+        })
       )}
     </ScrollView>
   );
@@ -155,10 +276,20 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 16,
   },
+  cardHeaderRow: {
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "space-between",
+  },
   cardTitle: {
     color: colors.secondary,
+    flex: 1,
     fontSize: 19,
     fontWeight: "bold",
+  },
+  favoriteIconDisabled: {
+    opacity: 0.4,
   },
   text: {
     color: colors.text,
