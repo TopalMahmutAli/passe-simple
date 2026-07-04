@@ -32,7 +32,12 @@ async function getChapters(): Promise<Chapter[]> {
 }
 
 export default function DiscoverScreen() {
-  const { data: chapters, isPending, isError } = useQuery({
+  const {
+    data: chapters,
+    isPending,
+    isError,
+    refetch: refetchChapters,
+  } = useQuery({
     queryKey: ["chapters"],
     queryFn: getChapters,
   });
@@ -52,6 +57,10 @@ export default function DiscoverScreen() {
         <Text style={styles.message}>
           Impossible de charger les chapitres.
         </Text>
+
+        <Pressable onPress={() => refetchChapters()} style={styles.button}>
+          <Text style={styles.buttonText}>Réessayer</Text>
+        </Pressable>
       </View>
     );
   }

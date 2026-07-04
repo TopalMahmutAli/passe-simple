@@ -88,7 +88,12 @@ export default function LessonScreen() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: lesson, isPending, isError } = useQuery({
+  const {
+    data: lesson,
+    isPending,
+    isError,
+    refetch: refetchLesson,
+  } = useQuery({
     queryKey: ["lesson", id],
     queryFn: () => getLesson(id),
   });
@@ -152,6 +157,10 @@ export default function LessonScreen() {
         <Text style={styles.message}>
           Impossible de charger cette fiche.
         </Text>
+
+        <Pressable onPress={() => refetchLesson()} style={styles.retryButton}>
+          <Text style={styles.retryButtonText}>Réessayer</Text>
+        </Pressable>
       </View>
     );
   }

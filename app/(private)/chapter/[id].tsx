@@ -111,7 +111,12 @@ export default function ChapterScreen() {
   const userId = user?.id;
   const queryClient = useQueryClient();
 
-  const { data, isPending, isError } = useQuery({
+  const {
+    data,
+    isPending,
+    isError,
+    refetch: refetchChapter,
+  } = useQuery({
     queryKey: ["chapter", id],
     queryFn: () => getChapter(id),
   });
@@ -175,6 +180,10 @@ export default function ChapterScreen() {
         <Text style={styles.message}>
           Impossible de charger ce chapitre.
         </Text>
+
+        <Pressable onPress={() => refetchChapter()} style={styles.button}>
+          <Text style={styles.buttonText}>Réessayer</Text>
+        </Pressable>
       </View>
     );
   }
