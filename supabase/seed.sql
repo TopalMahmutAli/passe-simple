@@ -105,3 +105,204 @@ set
   summary = excluded.summary,
   content = excluded.content,
   position = excluded.position;
+
+insert into public.questions (
+  id,
+  lesson_id,
+  question,
+  choice_a,
+  choice_b,
+  choice_c,
+  correct_choice,
+  position
+)
+values
+  (
+    '44444444-4444-4444-4444-000000000001',
+    '11111111-1111-1111-1111-111111111101',
+    'Combien d’ordres composent la société française avant 1789 ?',
+    'Deux',
+    'Trois',
+    'Quatre',
+    'b',
+    1
+  ),
+  (
+    '44444444-4444-4444-4444-000000000002',
+    '11111111-1111-1111-1111-111111111101',
+    'Quel est le point commun entre le clergé et la noblesse avant 1789 ?',
+    'Ils bénéficient de privilèges fiscaux',
+    'Ils appartiennent tous deux au tiers état',
+    'Ils paient la totalité des impôts royaux',
+    'a',
+    2
+  ),
+  (
+    '44444444-4444-4444-4444-000000000003',
+    '11111111-1111-1111-1111-111111111101',
+    'Qui supporte la plus grande partie des impôts royaux ?',
+    'Le clergé',
+    'La noblesse',
+    'Le tiers état',
+    'c',
+    3
+  ),
+  (
+    '44444444-4444-4444-4444-000000000004',
+    '11111111-1111-1111-1111-111111111102',
+    'Pourquoi le royaume de France est-il fortement endetté à la fin des années 1780 ?',
+    'À cause des guerres menées au XVIIIe siècle',
+    'À cause d’une baisse des impôts décidée par le roi',
+    'À cause d’une épidémie qui a ruiné le commerce',
+    'a',
+    1
+  ),
+  (
+    '44444444-4444-4444-4444-000000000005',
+    '11111111-1111-1111-1111-111111111102',
+    'Que se passe-t-il pour le prix du pain après les mauvaises récoltes de 1788 ?',
+    'Il baisse fortement',
+    'Il augmente fortement',
+    'Il reste stable',
+    'b',
+    2
+  ),
+  (
+    '44444444-4444-4444-4444-000000000006',
+    '11111111-1111-1111-1111-111111111102',
+    'Pourquoi Louis XVI décide-t-il de convoquer les États généraux ?',
+    'Pour proclamer la République',
+    'Pour signer la paix avec l’Angleterre',
+    'Pour obtenir l’accord du pays sur de nouveaux impôts',
+    'c',
+    3
+  ),
+  (
+    '44444444-4444-4444-4444-000000000007',
+    '22222222-2222-2222-2222-222222222201',
+    'Quel désaccord oppose le tiers état aux deux autres ordres aux États généraux ?',
+    'Le choix du vote par ordre ou par tête',
+    'Le lieu de réunion des États généraux',
+    'La date d’ouverture des États généraux',
+    'a',
+    1
+  ),
+  (
+    '44444444-4444-4444-4444-000000000008',
+    '22222222-2222-2222-2222-222222222201',
+    'Que font les députés du tiers état le 17 juin 1789 ?',
+    'Ils quittent définitivement Versailles',
+    'Ils se proclament Assemblée nationale',
+    'Ils demandent la dissolution des États généraux',
+    'b',
+    2
+  ),
+  (
+    '44444444-4444-4444-4444-000000000009',
+    '22222222-2222-2222-2222-222222222201',
+    'Que jurent les députés lors du Serment du Jeu de paume ?',
+    'De rétablir immédiatement la monarchie absolue',
+    'De quitter la vie politique',
+    'De ne pas se séparer avant d’avoir donné une Constitution à la France',
+    'c',
+    3
+  ),
+  (
+    '44444444-4444-4444-4444-000000000010',
+    '22222222-2222-2222-2222-222222222202',
+    'Que se passe-t-il à Paris le 14 juillet 1789 ?',
+    'Le sacre de Louis XVI',
+    'La signature de la Constitution',
+    'La prise de la Bastille par la foule',
+    'c',
+    1
+  ),
+  (
+    '44444444-4444-4444-4444-000000000011',
+    '22222222-2222-2222-2222-222222222202',
+    'Pourquoi la chute de la Bastille a-t-elle une grande portée symbolique ?',
+    'Elle représente la victoire du peuple contre l’arbitraire royal',
+    'Elle marque la fin définitive de la Révolution',
+    'Elle libère un grand nombre de prisonniers politiques',
+    'a',
+    2
+  ),
+  (
+    '44444444-4444-4444-4444-000000000012',
+    '22222222-2222-2222-2222-222222222202',
+    'Qu’est-ce que la Grande Peur ?',
+    'Une épidémie qui frappe Paris',
+    'Une panique qui pousse des paysans à attaquer des châteaux',
+    'Une invasion étrangère du royaume',
+    'b',
+    3
+  ),
+  (
+    '44444444-4444-4444-4444-000000000013',
+    '33333333-3333-3333-3333-333333333301',
+    'Que devient la France avec la Constitution de 1791 ?',
+    'Une république',
+    'Un empire',
+    'Une monarchie constitutionnelle',
+    'c',
+    1
+  ),
+  (
+    '44444444-4444-4444-4444-000000000014',
+    '33333333-3333-3333-3333-333333333301',
+    'Comment la Constitution de 1791 organise-t-elle le pouvoir ?',
+    'Une assemblée élue vote les lois pendant que le roi exerce le pouvoir exécutif',
+    'Le roi cumule pouvoir législatif et exécutif',
+    'Le pouvoir est exercé uniquement par l’Église',
+    'a',
+    2
+  ),
+  (
+    '44444444-4444-4444-4444-000000000015',
+    '33333333-3333-3333-3333-333333333301',
+    'Que se passe-t-il en juin 1791 à Varennes ?',
+    'Louis XVI est couronné une seconde fois',
+    'Louis XVI et sa famille sont arrêtés en tentant de fuir',
+    'Louis XVI signe son abdication définitive',
+    'b',
+    3
+  ),
+  (
+    '44444444-4444-4444-4444-000000000016',
+    '33333333-3333-3333-3333-333333333302',
+    'Que se passe-t-il le 10 août 1792 ?',
+    'Le palais des Tuileries est attaqué et le roi est suspendu',
+    'Louis XVI reprend tous ses pouvoirs',
+    'La Constitution de 1791 est adoptée',
+    'a',
+    1
+  ),
+  (
+    '44444444-4444-4444-4444-000000000017',
+    '33333333-3333-3333-3333-333333333302',
+    'Comment est élue la Convention nationale ?',
+    'Par tirage au sort',
+    'Au suffrage universel masculin',
+    'Uniquement par les nobles',
+    'b',
+    2
+  ),
+  (
+    '44444444-4444-4444-4444-000000000018',
+    '33333333-3333-3333-3333-333333333302',
+    'Que décide la Convention le 21 septembre 1792 ?',
+    'De rétablir Louis XVI sur le trône',
+    'De signer la paix avec l’Autriche',
+    'D’abolir la monarchie et proclamer la République',
+    'c',
+    3
+  )
+on conflict (id) do update
+set
+  lesson_id = excluded.lesson_id,
+  question = excluded.question,
+  choice_a = excluded.choice_a,
+  choice_b = excluded.choice_b,
+  choice_c = excluded.choice_c,
+  correct_choice = excluded.correct_choice,
+  position = excluded.position;
