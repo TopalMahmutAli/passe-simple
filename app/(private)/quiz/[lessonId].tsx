@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
@@ -289,58 +290,67 @@ export default function QuizScreen() {
       contentContainerStyle={styles.container}
       contentInsetAdjustmentBehavior="automatic"
     >
-      <Text style={styles.progress}>
-        Question {currentIndex + 1} sur {questions.length}
-      </Text>
-      <Text style={styles.title}>{currentQuestion.question}</Text>
+      <Animated.View
+        entering={FadeIn.duration(250)}
+        key={currentQuestion.id}
+        style={styles.questionContainer}
+      >
+        <Text style={styles.progress}>
+          Question {currentIndex + 1} sur {questions.length}
+        </Text>
+        <Text style={styles.title}>{currentQuestion.question}</Text>
 
-      {choices.map((choice) => {
-        const isSelected = selectedChoice === choice.key;
-        const isSelectedCorrect =
-          isSelected && choice.key === currentQuestion.correct_choice;
-        const isSelectedIncorrect =
-          isSelected && choice.key !== currentQuestion.correct_choice;
+        {choices.map((choice) => {
+          const isSelected = selectedChoice === choice.key;
+          const isSelectedCorrect =
+            isSelected && choice.key === currentQuestion.correct_choice;
+          const isSelectedIncorrect =
+            isSelected && choice.key !== currentQuestion.correct_choice;
 
-        return (
-          <Pressable
-            disabled={isAnswered}
-            key={choice.key}
-            onPress={() => handleSelectChoice(choice.key)}
-            style={[
-              styles.choiceButton,
-              isSelectedCorrect && styles.choiceButtonCorrect,
-              isSelectedIncorrect && styles.choiceButtonIncorrect,
-            ]}
+          return (
+            <Pressable
+              disabled={isAnswered}
+              key={choice.key}
+              onPress={() => handleSelectChoice(choice.key)}
+              style={[
+                styles.choiceButton,
+                isSelectedCorrect && styles.choiceButtonCorrect,
+                isSelectedIncorrect && styles.choiceButtonIncorrect,
+              ]}
+            >
+              <Text style={styles.choiceText}>{choice.label}</Text>
+            </Pressable>
+          );
+        })}
+
+        {isAnswered && (
+          <Animated.View
+            entering={FadeIn.duration(200)}
+            style={styles.feedbackContainer}
           >
-            <Text style={styles.choiceText}>{choice.label}</Text>
-          </Pressable>
-        );
-      })}
-
-      {isAnswered && (
-        <View style={styles.feedbackContainer}>
-          <Text
-            style={
-              isCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect
-            }
-          >
-            {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
-          </Text>
-
-          {!isCorrect && (
-            <Text style={styles.message}>
-              La bonne réponse était :{" "}
-              {getChoiceLabel(currentQuestion, currentQuestion.correct_choice)}
+            <Text
+              style={
+                isCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect
+              }
+            >
+              {isCorrect ? "Bonne réponse !" : "Mauvaise réponse."}
             </Text>
-          )}
 
-          <Pressable onPress={handleNext} style={styles.button}>
-            <Text style={styles.buttonText}>
-              {isLastQuestion ? "Voir mon résultat" : "Question suivante"}
-            </Text>
-          </Pressable>
-        </View>
-      )}
+            {!isCorrect && (
+              <Text style={styles.message}>
+                La bonne réponse était :{" "}
+                {getChoiceLabel(currentQuestion, currentQuestion.correct_choice)}
+              </Text>
+            )}
+
+            <Pressable onPress={handleNext} style={styles.button}>
+              <Text style={styles.buttonText}>
+                {isLastQuestion ? "Voir mon résultat" : "Question suivante"}
+              </Text>
+            </Pressable>
+          </Animated.View>
+        )}
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -351,6 +361,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     gap: spacing.large,
     padding: spacing.xxlarge,
+  },
+  questionContainer: {
+    gap: spacing.large,
   },
   messageContainer: {
     flex: 1,

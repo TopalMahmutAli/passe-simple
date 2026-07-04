@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
 import { borderRadius, spacing } from "@/theme/layout";
@@ -81,8 +82,11 @@ export default function DiscoverScreen() {
       ListEmptyComponent={
         <Text style={styles.message}>Aucun chapitre disponible.</Text>
       }
-      renderItem={({ item }) => (
-        <View style={styles.card}>
+      renderItem={({ item, index }) => (
+        <Animated.View
+          entering={FadeInDown.duration(300).delay(index * 60)}
+          style={styles.card}
+        >
           <Text style={styles.cardTitle}>{item.title}</Text>
           <Text style={styles.cardText}>{item.description}</Text>
 
@@ -97,7 +101,7 @@ export default function DiscoverScreen() {
               <Text style={styles.buttonText}>Voir le chapitre</Text>
             </Pressable>
           </Link>
-        </View>
+        </Animated.View>
       )}
     />
   );
