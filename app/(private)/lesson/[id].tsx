@@ -1,13 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
+  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/lib/supabase";
 import { colors } from "@/theme/colors";
 
@@ -32,13 +34,104 @@ async function getLesson(id: string): Promise<Lesson> {
   return data;
 }
 
+async function getIsFavorite(userId: string | undefined, lessonId: string) {
+  if (!userId) {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from("favorites")
+    .select("lesson_id")
+    .eq("user_id", userId)
+    .eq("lesson_id", lessonId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return Boolean(data);
+}
+
+async function toggleFavorite(
+  userId: string,
+  lessonId: string,
+  isFavorite: boolean
+) {
+  if (isFavorite) {
+    const { error } = await supabase
+      .from("favorites")
+      .delete()
+      .eq("user_id", userId)
+      .eq("lesson_id", lessonId);
+
+    if (error) {
+      throw error;
+    }
+
+    return;
+  }
+
+  const { error } = await supabase.from("favorites").insert({
+    user_id: userId,
+    lesson_id: lessonId,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
 export default function LessonScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: lesson, isPending, isError } = useQuery({
     queryKey: ["lesson", id],
     queryFn: () => getLesson(id),
   });
+
+  const {
+    data: isFavorite = false,
+    isPending: isFavoritePending,
+    isError: isFavoriteError,
+    refetch: refetchFavorite,
+  } = useQuery({
+    queryKey: ["favorite", user?.id, id],
+    queryFn: () => getIsFavorite(user?.id, id),
+    enabled: Boolean(user?.id) && Boolean(id),
+  });
+
+  const favoriteMutation = useMutation({
+    mutationFn: (userId: string) => toggleFavorite(userId, id, isFavorite),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["favorite", user?.id, id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["favorites", user?.id],
+      });
+    },
+    onError: () => {
+      Alert.alert(
+        "Favori impossible",
+        "Une erreur est survenue pendant la mise à jour du favori."
+      );
+    },
+  });
+
+  function handleToggleFavorite() {
+    if (!user?.id) {
+      Alert.alert(
+        "Connexion nécessaire",
+        "Vous devez être connecté pour gérer vos favoris."
+      );
+      return;
+    }
+
+    favoriteMutation.mutate(user.id);
+  }
 
   if (isPending) {
     return (
@@ -67,6 +160,38 @@ export default function LessonScreen() {
       <Text style={styles.title}>{lesson.title}</Text>
       <Text style={styles.summary}>{lesson.summary}</Text>
       <Text style={styles.content}>{lesson.content}</Text>
+
+      {isFavoriteError ? (
+        <View style={styles.favoriteErrorContainer}>
+          <Text style={styles.message}>Impossible de charger le favori.</Text>
+          <Pressable
+            onPress={() => refetchFavorite()}
+            style={styles.retryButton}
+          >
+            <Text style={styles.retryButtonText}>Réessayer</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <Pressable
+          disabled={isFavoritePending || favoriteMutation.isPending}
+          onPress={handleToggleFavorite}
+          style={[
+            styles.favoriteButton,
+            (isFavoritePending || favoriteMutation.isPending) &&
+              styles.favoriteButtonDisabled,
+          ]}
+        >
+          <Text style={styles.favoriteButtonText}>
+            {isFavoritePending
+              ? "Chargement du favori..."
+              : favoriteMutation.isPending
+                ? "Mise à jour..."
+                : isFavorite
+                  ? "Retirer des favoris"
+                  : "Ajouter aux favoris"}
+          </Text>
+        </Pressable>
+      )}
 
       <Link
         href={{
@@ -126,6 +251,34 @@ const styles = StyleSheet.create({
     padding: 14,
   },
   buttonText: {
+    color: colors.background,
+    fontWeight: "bold",
+  },
+  favoriteButton: {
+    alignItems: "center",
+    backgroundColor: colors.accent,
+    borderRadius: 10,
+    padding: 14,
+  },
+  favoriteButtonDisabled: {
+    opacity: 0.6,
+  },
+  favoriteButtonText: {
+    color: colors.text,
+    fontWeight: "bold",
+  },
+  favoriteErrorContainer: {
+    alignItems: "center",
+    gap: 10,
+  },
+  retryButton: {
+    alignItems: "center",
+    backgroundColor: colors.secondary,
+    borderRadius: 10,
+    padding: 10,
+    paddingHorizontal: 20,
+  },
+  retryButtonText: {
     color: colors.background,
     fontWeight: "bold",
   },
