@@ -1,11 +1,10 @@
 # Passé Simple
 
-Passé Simple est une application mobile éducative qui aide à apprendre l'Histoire grâce à des fiches courtes, des favoris et des mini-quiz.
+Passé Simple est une application mobile éducative pour apprendre l'Histoire avec des fiches courtes, des favoris et des mini-quiz.
 
 ## Présentation
 
-- **Nom** : Passé Simple.
-- **Idée en une phrase** : réviser la Révolution française à travers des fiches courtes, des favoris et des mini-quiz.
+- **Idée en une phrase** : réviser la Révolution française avec des fiches courtes, des favoris et des mini-quiz.
 - **Public** : collégiens, lycéens, étudiants souhaitant réviser rapidement, et toute personne intéressée par la culture générale.
 - **Périmètre** : le MVP couvre uniquement la Révolution française, de la fin de l'Ancien Régime à la naissance de la République en septembre 1792.
 
@@ -75,8 +74,8 @@ app/
 - React Context pour la session utilisateur (`AuthContext`) ;
 - AsyncStorage pour la préférence et l'identifiant du rappel quotidien ;
 - Expo Notifications pour le rappel local ;
-- React Native Reanimated est installé ; les animations restent à finaliser et ne sont pas encore utilisées dans l'application ;
-- aucun outil de test automatisé n'est installé pour le moment ; Jest et React Native Testing Library sont prévus pour couvrir les parcours principaux.
+- React Native Reanimated pour des animations discrètes (apparition des chapitres, transitions entre les questions du quiz) ;
+- Jest et React Native Testing Library couvrent les parcours principaux (authentification, chapitres, favoris, fiche, quiz) et les fonctions pures du quiz.
 
 ## Installation locale
 
@@ -111,15 +110,10 @@ Le seed peut être relancé sans risque : les insertions utilisent `on conflict`
 - `npm run android` : démarre sur un émulateur ou appareil Android ;
 - `npm run ios` : démarre sur un simulateur ou appareil iOS ;
 - `npm run web` : démarre la version web ;
-- `npm run lint` : lance ESLint.
+- `npm run lint` : lance ESLint ;
+- `npm test` : lance les tests Jest.
 
-## État du projet
 
-- [x] Conception terminée
-- [x] Phase principale de développement terminée
-- [ ] Finition en cours (erreurs et états vides gérés ; animations et mode sombre restants)
-- [ ] Tests automatisés
-- [ ] Builds de production
 
 ## Brique avancée : rappel local
 
@@ -127,17 +121,15 @@ Un rappel quotidien à 18 h peut être activé depuis l'écran "Mon compte". La 
 
 Le rappel est une notification **locale** : elle est programmée sur l'appareil via `expo-notifications`, sans serveur, sans token push et sans Edge Function. L'identifiant de la notification et la préférence de l'utilisateur sont conservés avec AsyncStorage.
 
-Le fonctionnement a été vérifié sur iPhone avec Expo Go. La compatibilité Android (création du canal de notification) est implémentée mais n'a pas encore été testée sur un appareil physique ; une validation finale sur les deux plateformes nécessitera un development build.
-
 ## Monétisation
 
 Passé Simple adopte un modèle freemium : le contenu sur la Révolution française reste gratuit, avec un élargissement payant envisagé vers d'autres périodes historiques. Le détail de la stratégie est décrit dans [CAHIER_DES_CHARGES.md](./CAHIER_DES_CHARGES.md).
 
-## Livrables prévus
+## Livrables
 
 - un ZIP propre du code source ;
-- un build Android signé ;
-- un build iOS signé si les prérequis Apple (compte développeur, certificats) sont disponibles ;
+- un build Android signé (`passe-simple-android-1.0.0.aab`) ;
+
 - voie A de livraison : build de production accompagné d'un plan de publication.
 
 Le périmètre détaillé, les écrans, les données et les critères d'acceptation sont disponibles dans [CAHIER_DES_CHARGES.md](./CAHIER_DES_CHARGES.md).

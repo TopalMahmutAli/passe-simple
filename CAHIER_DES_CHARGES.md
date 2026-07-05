@@ -4,7 +4,7 @@
 
 ### Idée en une phrase
 
-Passé Simple est une application mobile éducative qui permet d'apprendre l'Histoire avec des fiches courtes, des favoris et des mini-quiz.
+Passé Simple est une application mobile éducative pour apprendre l'Histoire avec des fiches courtes, des favoris et des mini-quiz.
 
 ### Problème identifié
 
@@ -201,9 +201,7 @@ La brique avancée du MVP est la notification locale.
 
 L'utilisateur active un rappel quotidien à 18 h depuis l'écran Mon compte. La permission de notification est demandée uniquement au moment de cette action, jamais au lancement de l'application. Si la permission est refusée, le réglage reste désactivé et un message explique la situation. L'identifiant de la notification programmée et la préférence d'activation sont conservés avec AsyncStorage.
 
-Il s'agit d'une notification strictement locale, programmée sur l'appareil : aucun serveur, aucun token push, aucune Edge Function et aucune table `push_tokens` ne sont utilisés.
-
-Le fonctionnement a été vérifié sur iPhone via Expo Go. La compatibilité Android (création du canal de notification) est implémentée mais n'a pas encore été testée sur un appareil physique ; une validation finale sur les deux plateformes nécessitera un development build.
+La notification est strictement locale, programmée sur l'appareil : aucun serveur, aucun token push, aucune Edge Function et aucune table `push_tokens` ne sont utilisés.
 
 Le GPS, les capteurs et les notifications push serveur ne font pas partie du MVP.
 
@@ -211,7 +209,7 @@ Le GPS, les capteurs et les notifications push serveur ne font pas partie du MVP
 
 L'interface doit évoquer l'Histoire sans imiter un vieux document difficile à lire.
 
-Palette réellement utilisée, centralisée dans `theme/colors.ts` :
+Palette utilisée, centralisée dans `theme/colors.ts` :
 
 - Bordeaux `#6E1F2A` — couleur principale ;
 - Grenat `#8B2635` — couleur secondaire ;
@@ -220,9 +218,9 @@ Palette réellement utilisée, centralisée dans `theme/colors.ts` :
 - Or vieilli `#B38A4B` — accent ;
 - Encre `#24201D` — texte principal.
 
-Il s'agit pour l'instant d'un petit système de couleurs et de styles cohérents, pas d'un système de composants UI complet.
+C'est pour l'instant un petit système de couleurs et de styles cohérents, pas un système de composants UI complet.
 
-Des animations discrètes sont envisagées (apparition des cartes, transition entre les questions, retour visuel sur une réponse), mais aucune n'est implémentée à ce jour ; React Native Reanimated est installé sans être encore utilisé.
+Des animations discrètes sont implémentées avec React Native Reanimated : apparition en cascade des chapitres sur l'écran Découvrir, transition entre les questions du mini-quiz.
 
 ## 10. Gestion des erreurs
 
@@ -235,14 +233,16 @@ L'application doit prévoir :
 - un message si la permission de notification est refusée ;
 - un écran clair si une fiche demandée n'existe pas.
 
-## 11. Tests prévus
+## 11. Tests automatisés
 
-1. La liste des chapitres s'affiche ;
-2. l'état vide des favoris est visible ;
-3. ajouter une fiche aux favoris met l'écran à jour ;
-4. le score du quiz est calculé correctement ;
-5. terminer un quiz enregistre la progression ;
-6. un utilisateur non connecté ne peut pas accéder aux écrans privés.
+Tests réalisés avec Jest et React Native Testing Library (`jest-expo`) :
+
+1. connexion : formulaire vide bloqué, connexion réussie, erreur Supabase affichée ;
+2. chapitres : liste des chapitres affichée, état vide sans chapitre ;
+3. favoris : accès refusé sans utilisateur connecté, état vide sans favori ;
+4. fiche : ajout aux favoris pour l'utilisateur et la fiche courants ;
+5. quiz : enregistrement de la progression une fois le quiz terminé ;
+6. fonctions pures du quiz : libellé du choix, détection de la bonne réponse, message de résultat selon le score.
 
 Les tests utilisent des données simulées et ne contactent pas le vrai projet Supabase.
 
@@ -273,7 +273,7 @@ Le MVP est fonctionnel lorsque :
 - AsyncStorage ;
 - Expo Notifications ;
 - React Native Reanimated ;
-- Jest et React Native Testing Library (prévus, non encore installés).
+- Jest et React Native Testing Library.
 
 ## 14. Monétisation
 
@@ -286,56 +286,29 @@ Passé Simple adopte un modèle freemium sans publicité. Le programme consacré
 - les favoris et le suivi de progression ;
 - les rappels de révision.
 
-Cette partie constitue une expérience complète et permet d'utiliser l'application sans limite artificielle.
+Cette partie offre une expérience complète, sans limite artificielle.
 
 ### Évolution payante envisagée
 
 De nouvelles périodes historiques pourront être proposées sous forme de packs à acheter une seule fois, par exemple l'Antiquité, le Moyen Âge ou les guerres mondiales.
 
-Le prix envisagé est de 2,99 € par pack. Avec une commission de store estimée entre 15 % et 30 % dans le cadre du cours, le revenu serait d'environ 2,54 € à 2,09 € par vente, avant taxes.
+Le prix envisagé est de 2,99 € par pack. Avec une commission de store estimée entre 15 % et 30 %, le revenu serait d'environ 2,54 € à 2,09 € par vente, avant taxes.
 
-L'achat à l'unité est préféré à l'abonnement, car l'utilisation de l'application peut être ponctuelle et aucun nouveau contenu mensuel n'est garanti. La publicité est écartée afin de préserver la concentration et l'image éducative de l'application.
+L'achat à l'unité est préféré à l'abonnement, car l'utilisation de l'application peut être ponctuelle et aucun nouveau contenu mensuel n'est garanti. La publicité est écartée pour préserver la concentration et l'image éducative de l'application.
 
 ### Mise en œuvre future
 
-Les packs numériques devront être créés dans Google Play et l'App Store puis achetés avec le système d'achat intégré des stores. RevenueCat pourra simplifier la récupération des produits, la vérification des achats et la restauration des droits sur un nouvel appareil.
+Les packs numériques devront être créés dans Google Play et l'App Store, puis vendus via le système d'achat intégré des stores. RevenueCat pourra simplifier la récupération des produits, la vérification des achats et la restauration des droits sur un nouvel appareil.
 
 Aucun paiement ne sera développé dans le MVP. Seule cette stratégie est documentée pour répondre aux exigences du projet.
 
-## 15. État d'avancement
-
-### Terminé
-
-- conception et cahier des charges ;
-- navigation ;
-- authentification (inscription, connexion, session, déconnexion) ;
-- backend Supabase (chapitres, fiches, favoris, progression) ;
-- contenu des trois chapitres et six fiches ;
-- favoris (ajout, retrait, écran dédié) ;
-- mini-quiz et sauvegarde du meilleur score ;
-- écran de progression ;
-- notification locale de rappel quotidien ;
-- gestion des chargements, erreurs et états vides sur les écrans principaux.
-
-### En cours ou restant
-
-- animations ;
-- tests automatisés ;
-- assets définitifs (icône, splash) ;
-- configuration EAS finale ;
-- development build validé ;
-- builds de production Android et iOS ;
-- préparation du ZIP source ;
-- plan de publication final.
-
-## 16. Livraison et livrables
+## 15. Livraison et livrables
 
 La voie de livraison retenue est la voie A : un build de production accompagné d'un plan de publication, sans publication réelle sur un store.
 
 - code source, livré sous forme de ZIP propre (sans `node_modules`, `.expo`, `.git`, `.env.local`, caches ni secrets) ;
 - README ;
 - cahier des charges ;
-- une archive Android signée ;
-- une archive iOS signée si le compte et les certificats Apple sont disponibles.
+- une archive Android signée (`passe-simple-android-1.0.0.aab`).
 
-Aucun build de production n'existe à ce jour ; ils font partie des prochaines étapes.
+Le build de production Android est disponible. Le build iOS reste conditionné à la disponibilité d'un compte développeur et de certificats Apple.
