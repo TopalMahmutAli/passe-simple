@@ -130,6 +130,5 @@ Passé Simple adopte un modèle freemium : le contenu sur la Révolution frança
 - un ZIP propre du code source ;
 - un build Android signé (`passe-simple-android-1.0.0.aab`) ;
 
-- voie A de livraison : build de production accompagné d'un plan de publication.
 
 Le périmètre détaillé, les écrans, les données et les critères d'acceptation sont disponibles dans [CAHIER_DES_CHARGES.md](./CAHIER_DES_CHARGES.md).
